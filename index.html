@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 26: Space &amp; The Future — Interactive Games</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.png" type="image/png">
+
+    <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+                        body: ['Inter', 'sans-serif']
+                    },
+                    colors: {
+                        nebula: '#faf7fc'
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+<body class="bg-nebula bg-[radial-gradient(#e4d4f4_1px,transparent_1px)] [background-size:22px_22px] text-slate-800 font-body antialiased min-h-screen py-6 px-4 sm:py-10 sm:px-6">
+
+    <!-- Floating Incomplete Warning Toast -->
+    <div
+        id="incomplete-toast"
+        role="alert"
+        aria-live="assertive"
+        class="hidden fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-md bg-rose-600 text-white rounded-2xl shadow-xl shadow-rose-950/30 px-5 py-4 flex items-center justify-between gap-3 border border-rose-400/70"
+    >
+        <div class="flex items-center gap-3">
+            <span class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center shrink-0 text-lg">
+                ⚠️
+            </span>
+            <div>
+                <p class="font-sans font-extrabold text-sm sm:text-base leading-snug">Oops, ти ще не все виконав</p>
+                <p id="toast-detail" class="text-xs text-rose-100 mt-0.5">Заповни всі підсвічені червоним завдання та спробуй ще раз.</p>
+            </div>
+        </div>
+        <button
+            type="button"
+            id="close-toast-btn"
+            aria-label="Close warning"
+            class="p-2 rounded-xl hover:bg-white/15 transition shrink-0"
+        >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Main Centered Container -->
+    <div class="max-w-3xl mx-auto space-y-6 sm:space-y-8">
+
+        <!-- Header Card: Galactic Plum to Cosmic Fuchsia Theme -->
+        <header class="bg-white rounded-3xl shadow-md shadow-purple-950/10 border border-purple-900/10 overflow-hidden">
+            <div class="relative bg-[linear-gradient(135deg,#3b0764_0%,#7e22ce_55%,#db2777_100%)] px-6 py-7 sm:px-8 sm:py-9 text-white overflow-hidden">
+                <!-- Decorative Nebula Orbs -->
+                <div class="pointer-events-none absolute -top-16 -right-14 w-56 h-56 rounded-full bg-fuchsia-300/20"></div>
+                <div class="pointer-events-none absolute -bottom-20 right-16 w-40 h-40 rounded-full bg-purple-300/20"></div>
+
+                <div class="relative z-10">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 border border-white/25 text-fuchsia-100 text-xs font-bold tracking-wider uppercase mb-3">
+                        <span>🛸</span>
+                        <span>Lesson 26 • Space &amp; The Future</span>
+                    </div>
+                    <h1 class="font-sans text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight">
+                        ✨ Future in Space: 5 Mission Games
+                    </h1>
+                    <p class="text-purple-50/95 mt-2 text-sm sm:text-base max-w-xl">
+                        Reply in Space Messenger, scan the grammar radar, switch verbs in the mission log, transform sentences, and inspect space English!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Student Name Input -->
+            <div class="p-6 sm:px-8 sm:py-6 bg-white">
+                <label for="studentName" class="block text-sm font-bold text-slate-800 mb-2">
+                    Your Name / Твоє ім'я <span class="text-rose-600">*</span>
+                </label>
+                <input
+                    type="text"
+                    id="studentName"
+                    name="studentName"
+                    placeholder="Enter your first and last name..."
+                    autocomplete="name"
+                    class="w-full sm:max-w-md px-4 py-3 rounded-xl border border-slate-300 bg-slate-50/70 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-purple-600 focus:bg-white transition"
+                >
+                <p id="name-error" class="hidden mt-2 text-xs font-semibold text-rose-600 flex items-center gap-1.5">
+                    <span>⚠️</span>
+                    <span>Please enter your name before submitting.</span>
+                </p>
+            </div>
+        </header>
+
+        <!-- Collapsible Grammar Cheat Sheet -->
+        <section class="bg-white rounded-3xl shadow-sm border border-purple-200/90 overflow-hidden">
+            <button
+                type="button"
+                id="help-toggle"
+                aria-expanded="false"
+                aria-controls="help-panel"
+                class="w-full px-6 py-4 sm:px-8 sm:py-5 flex items-center justify-between gap-4 text-left bg-purple-50/75 hover:bg-purple-50 transition cursor-pointer"
+            >
+                <div class="flex items-center gap-3.5">
+                    <span class="w-10 h-10 rounded-2xl bg-purple-900 text-fuchsia-200 flex items-center justify-center shrink-0 shadow-sm text-lg">
+                        📘
+                    </span>
+                    <div>
+                        <span class="block font-sans text-base sm:text-lg font-extrabold text-slate-900">Grammar Help: 4 Ways to Talk About the Future</span>
+                        <span class="block text-xs sm:text-sm text-slate-600">Click to open or close your quick Space Future guide</span>
+                    </div>
+                </div>
+                <svg id="help-chevron" class="w-5 h-5 text-purple-800 shrink-0 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+
+            <div id="help-panel" class="hidden border-t border-purple-100 p-6 sm:p-8 bg-white">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
+                    <div class="p-4 rounded-2xl bg-amber-50/70 border border-amber-200 space-y-1.5">
+                        <div class="font-extrabold text-amber-950">🕒 1. Present Simple (Timetables)</div>
+                        <p class="text-slate-600">Official schedules: rockets, planes, trains, lessons, doors.</p>
+                        <div class="bg-white rounded-xl p-2.5 border border-amber-100 text-amber-950 font-semibold space-y-0.5">
+                            <div>+ The rocket <u>launches</u> at 8:00.</div>
+                            <div>− The bus <u>doesn't arrive</u> at 10:00.</div>
+                            <div>? <u>Does</u> the plane <u>land</u> at 6:00?</div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-sky-50/70 border border-sky-200 space-y-1.5">
+                        <div class="font-extrabold text-sky-950">📅 2. Present Continuous (Arrangements)</div>
+                        <p class="text-slate-600">Already organized plans with a set time/place or tickets.</p>
+                        <div class="bg-white rounded-xl p-2.5 border border-sky-100 text-sky-950 font-semibold space-y-0.5">
+                            <div>+ She <u>is meeting</u> Dr. Kim at 3 PM.</div>
+                            <div>− I <u>am not working</u> on Monday.</div>
+                            <div>? <u>Are</u> you <u>flying</u> tomorrow?</div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-fuchsia-50/70 border border-fuchsia-200 space-y-1.5">
+                        <div class="font-extrabold text-fuchsia-950">🎯 3. be going to (Intentions &amp; Evidence)</div>
+                        <p class="text-slate-600">Personal goals/plans OR predictions you can clearly see.</p>
+                        <div class="bg-white rounded-xl p-2.5 border border-fuchsia-100 text-fuchsia-950 font-semibold space-y-0.5">
+                            <div>+ Watch out! It <u>is going to fall</u>!</div>
+                            <div>− They <u>aren't going to launch</u> today.</div>
+                            <div>? <u>Is</u> she <u>going to visit</u> Mars?</div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-purple-50/70 border border-purple-200 space-y-1.5">
+                        <div class="font-extrabold text-purple-950">⚡ 4. Future Simple — will (Instant &amp; Guesses)</div>
+                        <p class="text-slate-600">Spontaneous decisions, offers, promises, and opinions (<em>I think / maybe</em>).</p>
+                        <div class="bg-white rounded-xl p-2.5 border border-purple-100 text-purple-950 font-semibold space-y-0.5">
+                            <div>+ Quick, I <u>will help</u> you!</div>
+                            <div>− I promise I <u>won't tell</u> anyone.</div>
+                            <div>? <u>Will</u> humans <u>live</u> on Mars?</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Homework Form -->
+        <form id="homework-form" class="space-y-6 sm:space-y-8" novalidate>
+
+            <!-- ========================================== -->
+            <!-- GAME 1: SPACE MESSENGER (5 PTS)            -->
+            <!-- ========================================== -->
+            <section class="bg-white rounded-3xl shadow-sm border border-purple-900/10 p-6 sm:p-8 space-y-5">
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                    <div class="flex-1 min-w-[220px]">
+                        <span class="text-xs font-bold uppercase tracking-wider text-purple-700">Game 1 of 5 • Space Messenger</span>
+                        <h2 class="font-sans text-xl font-extrabold text-slate-900 mt-0.5">Reply to the Crew!</h2>
+                        <p class="text-sm text-slate-600 mt-1">Your space crew sent you 5 urgent messages. Tap the reply bubble with the correct future tense.</p>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button
+                            type="button"
+                            data-hint-target="hint-game-1"
+                            class="hint-toggle-btn inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-amber-100 text-amber-950 hover:bg-amber-200 active:scale-95 transition"
+                        >
+                            <span>💡</span>
+                            <span>Hint</span>
+                        </button>
+                        <span id="g1-score-badge" class="hidden px-3 py-1.5 rounded-full text-xs font-bold bg-purple-100 text-purple-900"></span>
+                    </div>
+                </div>
+
+                <!-- Ukrainian Hint -->
+                <div id="hint-game-1" class="hidden rounded-2xl bg-amber-50 border border-amber-300 px-4 py-3 text-sm text-amber-950 flex items-start gap-2.5">
+                    <span class="text-base shrink-0">💡</span>
+                    <p>Прочитай повідомлення від членів екіпажу та натисни на правильну відповідь у чаті. Звертай увагу на підказки: пропозиція прямо зараз (<em>will</em>), розклад (<em>Present Simple</em>), очевидний прогноз (<em>going to</em>) чи домовленість (<em>Present Continuous</em>).</p>
+                </div>
+
+                <div id="g1-container" class="space-y-4"></div>
+            </section>
+
+            <!-- ========================================== -->
+            <!-- GAME 2: 4-WAY FUTURE RADAR (6 PTS)         -->
+            <!-- ========================================== -->
+            <section class="bg-white rounded-3xl shadow-sm border border-purple-900/10 p-6 sm:p-8 space-y-5">
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                    <div class="flex-1 min-w-[220px]">
+                        <span class="text-xs font-bold uppercase tracking-wider text-purple-700">Game 2 of 5 • Future Radar</span>
+                        <h2 class="font-sans text-xl font-extrabold text-slate-900 mt-0.5">Scan the Grammar Rule!</h2>
+                        <p class="text-sm text-slate-600 mt-1">Read each space sentence and tap the badge that explains <strong>WHY</strong> this future form is used.</p>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button
+                            type="button"
+                            data-hint-target="hint-game-2"
+                            class="hint-toggle-btn inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-amber-100 text-amber-950 hover:bg-amber-200 active:scale-95 transition"
+                        >
+                            <span>💡</span>
+                            <span>Hint</span>
+                        </button>
+                        <span id="g2-score-badge" class="hidden px-3 py-1.5 rounded-full text-xs font-bold bg-purple-100 text-purple-900"></span>
+                    </div>
+                </div>
+
+                <!-- Ukrainian Hint -->
+                <div id="hint-game-2" class="hidden rounded-2xl bg-amber-50 border border-amber-300 px-4 py-3 text-sm text-amber-950 flex items-start gap-2.5">
+                    <span class="text-base shrink-0">💡</span>
+                    <p>Прочитай речення та обери один із 4 значків, який пояснює, чому використано саме цей час: <strong>🕒 Timetable</strong> (розклад), <strong>📅 Arrangement</strong> (домовленість), <strong>🎯 Plan / Evidence</strong> (намір або очевидний прогноз), <strong>⚡ Instant / Guess</strong> (обіцянка, рішення або припущення).</p>
+                </div>
+
+                <div id="g2-container" class="space-y-4"></div>
+            </section>
+
+            <!-- ========================================== -->
+            <!-- GAME 3: MISSION LOG VERB SWITCHES (6 PTS)  -->
+            <!-- ========================================== -->
+            <section class="bg-white rounded-3xl shadow-sm border border-purple-900/10 p-6 sm:p-8 space-y-5">
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                    <div class="flex-1 min-w-[220px]">
+                        <span class="text-xs font-bold uppercase tracking-wider text-purple-700">Game 3 of 5 • Interactive Mission Log</span>
+                        <h2 class="font-sans text-xl font-extrabold text-slate-900 mt-0.5">Switch the Verbs Live!</h2>
+                        <p class="text-sm text-slate-600 mt-1">Read the launch-day story and tap the correct verb inside each switch panel.</p>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button
+                            type="button"
+                            data-hint-target="hint-game-3"
+                            class="hint-toggle-btn inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-amber-100 text-amber-950 hover:bg-amber-200 active:scale-95 transition"
+                        >
+                            <span>💡</span>
+                            <span>Hint</span>
+                        </button>
+                        <span id="g3-score-badge" class="hidden px-3 py-1.5 rounded-full text-xs font-bold bg-purple-100 text-purple-900"></span>
+                    </div>
+                </div>
+
+                <!-- Ukrainian Hint -->
+                <div id="hint-game-3" class="hidden rounded-2xl bg-amber-50 border border-amber-300 px-4 py-3 text-sm text-amber-950 flex items-start gap-2.5">
+                    <span class="text-base shrink-0">💡</span>
+                    <p>У кожному реченні історії є перемикач із трьох варіантів дієслова. Натисни на правильний варіант у кожному перемикачі.</p>
+                </div>
+
+                <div id="g3-container" class="rounded-2xl bg-purple-50/40 border border-purple-200/80 p-5 sm:p-6 space-y-4"></div>
+            </section>
+
+            <!-- ========================================== -->
+            <!-- GAME 4: NEGATIVE & QUESTION FLIP (4 PTS)   -->
+            <!-- ========================================== -->
+            <section class="bg-white rounded-3xl shadow-sm border border-purple-900/10 p-6 sm:p-8 space-y-5">
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                    <div class="flex-1 min-w-[220px]">
+                        <span class="text-xs font-bold uppercase tracking-wider text-purple-700">Game 4 of 5 • Sentence Transformer</span>
+                        <h2 class="font-sans text-xl font-extrabold text-slate-900 mt-0.5">Flip to Negative (−) or Question (?)</h2>
+                        <p class="text-sm text-slate-600 mt-1">Look at the positive sentence and the mission badge. Choose the grammatically correct <strong>negative</strong> or <strong>question</strong>.</p>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button
+                            type="button"
+                            data-hint-target="hint-game-4"
+                            class="hint-toggle-btn inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-amber-100 text-amber-950 hover:bg-amber-200 active:scale-95 transition"
+                        >
+                            <span>💡</span>
+                            <span>Hint</span>
+                        </button>
+                        <span id="g4-score-badge" class="hidden px-3 py-1.5 rounded-full text-xs font-bold bg-purple-100 text-purple-900"></span>
+                    </div>
+                </div>
+
+                <!-- Ukrainian Hint -->
+                <div id="hint-game-4" class="hidden rounded-2xl bg-amber-50 border border-amber-300 px-4 py-3 text-sm text-amber-950 flex items-start gap-2.5">
+                    <span class="text-base shrink-0">💡</span>
+                    <p>Подивись на початкове речення та позначку (<strong>− Negative</strong> або <strong>? Question</strong>) і обери єдиний граматично правильний варіант перетворення.</p>
+                </div>
+
+                <div id="g4-container" class="space-y-4"></div>
+            </section>
+
+            <!-- ========================================== -->
+            <!-- GAME 5: GRAMMAR INSPECTOR STAMP (4 PTS)    -->
+            <!-- ========================================== -->
+            <section class="bg-white rounded-3xl shadow-sm border border-purple-900/10 p-6 sm:p-8 space-y-5">
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                    <div class="flex-1 min-w-[220px]">
+                        <span class="text-xs font-bold uppercase tracking-wider text-purple-700">Game 5 of 5 • Grammar Inspector</span>
+                        <h2 class="font-sans text-xl font-extrabold text-slate-900 mt-0.5">Stamp: Correct or Mistake?</h2>
+                        <p class="text-sm text-slate-600 mt-1">You are the Chief Space Inspector! Check each radio message and stamp it as <strong>Correct English</strong> or <strong>Grammar Mistake</strong>.</p>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button
+                            type="button"
+                            data-hint-target="hint-game-5"
+                            class="hint-toggle-btn inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-amber-100 text-amber-950 hover:bg-amber-200 active:scale-95 transition"
+                        >
+                            <span>💡</span>
+                            <span>Hint</span>
+                        </button>
+                        <span id="g5-score-badge" class="hidden px-3 py-1.5 rounded-full text-xs font-bold bg-purple-100 text-purple-900"></span>
+                    </div>
+                </div>
+
+                <!-- Ukrainian Hint -->
+                <div id="hint-game-5" class="hidden rounded-2xl bg-amber-50 border border-amber-300 px-4 py-3 text-sm text-amber-950 flex items-start gap-2.5">
+                    <span class="text-base shrink-0">💡</span>
+                    <p>Перевір 4 речення як інспектор: якщо речення написане без помилок — натисни <strong>✅ Correct</strong>, якщо в ньому є граматична помилка — натисни <strong>❌ Mistake</strong>.</p>
+                </div>
+
+                <div id="g5-container" class="space-y-3.5"></div>
+            </section>
+
+            <!-- ========================================== -->
+            <!-- SUBMISSION & RESULTS SECTION               -->
+            <!-- ========================================== -->
+            <section class="bg-white rounded-3xl shadow-sm border border-purple-900/10 p-6 sm:p-8 space-y-5">
+                <!-- Inline Incomplete Warning Banner -->
+                <div id="inline-incomplete-banner" class="hidden rounded-2xl bg-rose-50 border-2 border-rose-400 p-4 flex items-center gap-3 text-rose-900">
+                    <span class="text-xl shrink-0">⚠️</span>
+                    <div>
+                        <p class="font-sans font-extrabold text-sm sm:text-base">Oops, ти ще не все виконав</p>
+                        <p id="inline-incomplete-detail" class="text-xs sm:text-sm text-rose-700 mt-0.5"></p>
+                    </div>
+                </div>
+
+                <!-- Required Ukrainian Warning Above Submit Button -->
+                <div class="rounded-2xl bg-amber-50 border border-amber-300/90 p-4 flex items-start gap-3">
+                    <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <p class="text-sm sm:text-base font-semibold text-amber-950">
+                        Перевір точність своїх відповідей ще раз перед надсиланням вчителю
+                    </p>
+                </div>
+
+                <!-- Submit Button -->
+                <button
+                    type="submit"
+                    id="submit-btn"
+                    class="w-full py-4 px-6 rounded-2xl bg-[linear-gradient(135deg,#3b0764_0%,#7e22ce_55%,#db2777_100%)] hover:brightness-110 active:scale-[0.99] text-white font-sans font-bold text-base sm:text-lg shadow-lg shadow-purple-950/20 transition flex items-center justify-center gap-2.5 disabled:opacity-65 disabled:cursor-not-allowed"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                    </svg>
+                    <span id="submit-btn-text">Надіслати вчителю</span>
+                </button>
+
+                <!-- Results Summary Card -->
+                <div id="result-banner" class="hidden rounded-2xl p-5 sm:p-6 border transition-all space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div>
+                            <h3 id="result-title" class="font-sans text-lg font-extrabold"></h3>
+                            <p id="result-message" class="text-sm mt-1"></p>
+                        </div>
+                        <div class="shrink-0 bg-white rounded-2xl px-5 py-3 text-center border border-black/10 shadow-sm">
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Total Score</div>
+                            <div id="result-score" class="font-sans text-2xl font-extrabold text-purple-900 mt-0.5">0 / 25</div>
+                            <div id="result-percent" class="text-xs font-bold text-fuchsia-600">0%</div>
+                        </div>
+                    </div>
+
+                    <div id="result-breakdown" class="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-3 border-t border-black/10 text-xs"></div>
+                </div>
+            </section>
+
+        </form>
+
+        <footer class="text-center text-xs text-slate-400 pb-6">
+            Lesson 26: Space &amp; The Future — Interactive Games
+        </footer>
+    </div>
+
+    <script>
+        // ==========================================
+        // TELEGRAM BOT CONFIGURATION
+        // ==========================================
+        const BOT_TOKEN = "9000524592:AAFGz0I36Xc4XS2Y4qyNMfQzaxaWZMkLxGU";
+        const CHAT_ID = "749833850";
+
+        // ==========================================
+        // 5 GAME DATASETS (25 PTS TOTAL — AUTO-CHECKED)
+        // ==========================================
+
+        // Game 1: Space Messenger (5 pts)
+        const g1Data = [
+            {
+                id: 1,
+                sender: "Astronaut Leo",
+                avatar: "🧑‍🚀",
+                incoming: "Hey! My oxygen bag is super heavy, I can't carry it!",
+                replies: [
+                    { key: "A", text: "Here, I will carry it for you!" },
+                    { key: "B", text: "Here, I carry it for you!" }
+                ],
+                correct: "A",
+                note: "Spontaneous offer → will + verb"
+            },
+            {
+                id: 2,
+                sender: "Flight Director",
+                avatar: "📡",
+                incoming: "What time does the Moon shuttle take off tomorrow?",
+                replies: [
+                    { key: "A", text: "The schedule says it is taking off at 07:30." },
+                    { key: "B", text: "The schedule says it takes off at 07:30." }
+                ],
+                correct: "B",
+                note: "Official flight timetable → Present Simple"
+            },
+            {
+                id: 3,
+                sender: "Engineer Maya",
+                avatar: "🔧",
+                incoming: "Look at that asteroid! It is flying straight toward our satellite!",
+                replies: [
+                    { key: "A", text: "Oh no! It is going to hit it!" },
+                    { key: "B", text: "Oh no! It hits it!" }
+                ],
+                correct: "A",
+                note: "Clear visible evidence → be going to"
+            },
+            {
+                id: 4,
+                sender: "Commander Zara",
+                avatar: "👩‍🚀",
+                incoming: "Are you free tomorrow at 4 PM for a coffee?",
+                replies: [
+                    { key: "A", text: "Sorry, I am testing the new rover with Dr. Kim at 4 PM." },
+                    { key: "B", text: "Sorry, I will test the new rover with Dr. Kim at 4 PM." }
+                ],
+                correct: "A",
+                note: "Fixed arrangement with a person/time → Present Continuous"
+            },
+            {
+                id: 5,
+                sender: "Astronaut Leo",
+                avatar: "🧑‍🚀",
+                incoming: "Do you think humans will live on Saturn's moons in 2150?",
+                replies: [
+                    { key: "A", text: "Maybe! I think people will build cities there one day." },
+                    { key: "B", text: "Maybe! I think people build cities there one day." }
+                ],
+                correct: "A",
+                note: "Personal opinion / prediction without evidence → will"
+            }
+        ];
+
+        // Game 2: 4-Way Future Radar (6 pts)
+        const g2Badges = [
+            { key: "timetable", icon: "🕒", label: "Timetable" },
+            { key: "arrangement", icon: "📅", label: "Arrangement" },
+            { key: "plan", icon: "🎯", label: "Plan / Evidence" },
+            { key: "instant", icon: "⚡", label: "Instant / Guess" }
+        ];
+
+        const g2Data = [
+            {
+                id: 1,
+                sentence: "The space station doors close at 21:00 every evening.",
+                correct: "timetable"
+            },
+            {
+                id: 2,
+                sentence: "We are flying to the Moon base on Friday; our seats are already booked.",
+                correct: "arrangement"
+            },
+            {
+                id: 3,
+                sentence: "Watch out! Your coffee tube is floating toward the keyboard — it's going to spill!",
+                correct: "plan"
+            },
+            {
+                id: 4,
+                sentence: "I promise I won't forget to check the airlock before sleep.",
+                correct: "instant"
+            },
+            {
+                id: 5,
+                sentence: "Next summer, I am going to learn how to drive a Mars rover. That's my goal!",
+                correct: "plan"
+            },
+            {
+                id: 6,
+                sentence: "I think robots will cook all astronaut food in 50 years.",
+                correct: "instant"
+            }
+        ];
+
+        // Game 3: Mission Log — Inline Verb Switches (6 pts)
+        const g3Data = [
+            {
+                id: 1,
+                before: "1. According to the official timetable, our rocket",
+                options: ["launches", "is launching", "will launch"],
+                after: "at 06:00 AM sharp.",
+                correct: "launches"
+            },
+            {
+                id: 2,
+                before: "2. At 09:00 AM, Captain Nova",
+                options: ["meets", "is meeting", "will meet"],
+                after: "the NASA boss; it is already on her calendar.",
+                correct: "is meeting"
+            },
+            {
+                id: 3,
+                before: "3. I have free time this weekend, so I",
+                options: ["study", "am going to study", "will study"],
+                after: "the new star map. That is my plan.",
+                correct: "am going to study"
+            },
+            {
+                id: 4,
+                before: "4. Wait — the red warning light just turned on! I",
+                options: ["check", "am checking", "will check"],
+                after: "the computer screen right now!",
+                correct: "will check"
+            },
+            {
+                id: 5,
+                before: "5. Look at the battery bar — it is at 1%! The screen",
+                options: ["turns off", "is going to turn off", "will turn off"],
+                after: "in three seconds!",
+                correct: "is going to turn off"
+            },
+            {
+                id: 6,
+                before: "6. Don't worry! I am sure our mission",
+                options: ["is", "is going to be", "will be"],
+                after: "a huge success in the end.",
+                correct: "will be"
+            }
+        ];
+
+        // Game 4: Negative & Question Transformer (4 pts)
+        const g4Data = [
+            {
+                id: 1,
+                base: "The space bus arrives at 10:00.",
+                targetType: "question",
+                targetLabel: "? Make it a QUESTION",
+                options: [
+                    { key: "A", text: "Does the space bus arrive at 10:00?" },
+                    { key: "B", text: "Does the space bus arrives at 10:00?" },
+                    { key: "C", text: "Is the space bus arrive at 10:00?" }
+                ],
+                correct: "A"
+            },
+            {
+                id: 2,
+                base: "I will tell anyone your secret mission.",
+                targetType: "negative",
+                targetLabel: "− Make it NEGATIVE",
+                options: [
+                    { key: "A", text: "I don't will tell anyone your secret mission." },
+                    { key: "B", text: "I won't tell anyone your secret mission." },
+                    { key: "C", text: "I am not will tell anyone your secret mission." }
+                ],
+                correct: "B"
+            },
+            {
+                id: 3,
+                base: "They are going to launch the satellite today.",
+                targetType: "negative",
+                targetLabel: "− Make it NEGATIVE",
+                options: [
+                    { key: "A", text: "They don't going to launch the satellite today." },
+                    { key: "B", text: "They won't going to launch the satellite today." },
+                    { key: "C", text: "They aren't going to launch the satellite today." }
+                ],
+                correct: "C"
+            },
+            {
+                id: 4,
+                base: "You are meeting the flight director tonight.",
+                targetType: "question",
+                targetLabel: "? Make it a QUESTION",
+                options: [
+                    { key: "A", text: "Do you meeting the flight director tonight?" },
+                    { key: "B", text: "Are you meeting the flight director tonight?" },
+                    { key: "C", text: "Will you meeting the flight director tonight?" }
+                ],
+                correct: "B"
+            }
+        ];
+
+        // Game 5: Grammar Inspector — Correct or Mistake? (4 pts)
+        const g5Data = [
+            {
+                id: 1,
+                sentence: "Look at those dark storm clouds on Mars! It is going to storm soon.",
+                correct: "correct",
+                explanation: "Correct! Clear visible evidence uses 'is going to'."
+            },
+            {
+                id: 2,
+                sentence: "The space shuttle will leaves at 11:15 according to the flight timetable.",
+                correct: "mistake",
+                explanation: "Mistake! Timetables use Present Simple: 'leaves' (never 'will leaves')."
+            },
+            {
+                id: 3,
+                sentence: "I am not working in the space lab tomorrow; I have a day off.",
+                correct: "correct",
+                explanation: "Correct! Fixed personal arrangement in Present Continuous negative."
+            },
+            {
+                id: 4,
+                sentence: "Wait, the door is stuck! I am going to open it for you right now!",
+                correct: "mistake",
+                explanation: "Mistake! A spontaneous offer right now uses 'will': 'I will open it for you!'"
+            }
+        ];
+
+        // ==========================================
+        // APPLICATION STATE
+        // ==========================================
+        const g1State = {};
+        const g2State = {};
+        const g3State = {};
+        const g4State = {};
+        const g5State = {};
+
+        let isSubmittedAndLocked = false;
+        let lastPreparedReport = null;
+        let toastTimer = null;
+
+        // ==========================================
+        // HELPER UTILITIES
+        // ==========================================
+
+        function markMissing(el) {
+            el.classList.add("border-rose-500", "ring-2", "ring-rose-300", "bg-rose-50/70");
+        }
+
+        function clearMissing(el) {
+            el.classList.remove("border-rose-500", "ring-2", "ring-rose-300", "bg-rose-50/70");
+        }
+
+        function showIncompleteWarning(missingCount) {
+            const detailMsg = "Залишилось завершити: " + missingCount + " завдань/пунктів.";
+            const toast = document.getElementById("incomplete-toast");
+            const toastDetail = document.getElementById("toast-detail");
+            const inlineBanner = document.getElementById("inline-incomplete-banner");
+            const inlineDetail = document.getElementById("inline-incomplete-detail");
+
+            toastDetail.textContent = detailMsg;
+            inlineDetail.textContent = detailMsg;
+            toast.classList.remove("hidden");
+            inlineBanner.classList.remove("hidden");
+
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.add("hidden");
+            }, 5000);
+        }
+
+        function hideIncompleteWarning() {
+            document.getElementById("incomplete-toast").classList.add("hidden");
+            document.getElementById("inline-incomplete-banner").classList.add("hidden");
+        }
+
+        function showScoreBadge(elId, score, total) {
+            const badge = document.getElementById(elId);
+            if (!badge) return;
+            badge.textContent = score + " / " + total;
+            badge.classList.remove("hidden");
+        }
+
+        function setCardGradeStyle(card, isCorrect) {
+            card.classList.remove(
+                "border-slate-200", "bg-slate-50/60", "bg-white",
+                "border-rose-500", "ring-2", "ring-rose-300", "bg-rose-50/70",
+                "border-emerald-500", "bg-emerald-50/60"
+            );
+            if (isCorrect) {
+                card.classList.add("border-emerald-500", "bg-emerald-50/60");
+            } else {
+                card.classList.add("border-rose-500", "bg-rose-50/60");
+            }
+        }
+
+        // ==========================================
+        // GAME 1: SPACE MESSENGER
+        // ==========================================
+
+        function renderGame1() {
+            const container = document.getElementById("g1-container");
+            container.innerHTML = "";
+
+            g1Data.forEach((chat) => {
+                const card = document.createElement("div");
+                card.id = "g1-card-" + chat.id;
+                card.className = "p-4 sm:p-5 rounded-2xl border border-slate-200 bg-slate-50/60 transition-all space-y-3";
+
+                // Incoming message bubble
+                const incomingRow = document.createElement("div");
+                incomingRow.className = "flex items-start gap-2.5";
+
+                const avatar = document.createElement("div");
+                avatar.className = "w-9 h-9 rounded-full bg-purple-100 border border-purple-200 flex items-center justify-center text-lg shrink-0";
+                avatar.textContent = chat.avatar;
+
+                const bubbleWrap = document.createElement("div");
+                bubbleWrap.className = "space-y-1 max-w-[88%]";
+
+                const senderName = document.createElement("div");
+                senderName.className = "text-[11px] font-bold uppercase tracking-wider text-purple-800 pl-1";
+                senderName.textContent = chat.id + ". " + chat.sender;
+
+                const bubble = document.createElement("div");
+                bubble.className = "px-4 py-2.5 rounded-2xl rounded-tl-sm bg-white border border-slate-200 text-sm sm:text-base font-medium text-slate-800 shadow-sm";
+                bubble.textContent = chat.incoming;
+
+                bubbleWrap.appendChild(senderName);
+                bubbleWrap.appendChild(bubble);
+                incomingRow.appendChild(avatar);
+                incomingRow.appendChild(bubbleWrap);
+                card.appendChild(incomingRow);
+
+                // Quick Reply choices (aligned right like outgoing chat replies)
+                const repliesWrap = document.createElement("div");
+                repliesWrap.className = "flex flex-col items-end gap-2 pl-6 sm:pl-12";
+
+                chat.replies.forEach((rep) => {
+                    const btn = document.createElement("button");
+                    btn.type = "button";
+                    btn.dataset.key = rep.key;
+                    btn.className = "g1-reply w-full sm:w-auto text-left px-4 py-2.5 rounded-2xl rounded-tr-sm border border-purple-200 bg-white hover:border-purple-500 hover:bg-purple-50 text-xs sm:text-sm font-semibold text-slate-700 transition active:scale-[0.99]";
+                    btn.textContent = rep.text;
+
+                    btn.addEventListener("click", () => {
+                        if (isSubmittedAndLocked) return;
+                        g1State[chat.id] = rep.key;
+                        clearMissing(card);
+                        card.querySelectorAll(".g1-reply").forEach((b) => {
+                            if (b.dataset.key === rep.key) {
+                                b.className = "g1-reply w-full sm:w-auto text-left px-4 py-2.5 rounded-2xl rounded-tr-sm border-2 border-purple-700 bg-purple-700 text-white text-xs sm:text-sm font-bold shadow-sm transition";
+                            } else {
+                                b.className = "g1-reply w-full sm:w-auto text-left px-4 py-2.5 rounded-2xl rounded-tr-sm border border-purple-200 bg-white hover:border-purple-500 hover:bg-purple-50 text-xs sm:text-sm font-semibold text-slate-700 transition active:scale-[0.99]";
+                            }
+                        });
+                    });
+
+                    repliesWrap.appendChild(btn);
+                });
+
+                card.appendChild(repliesWrap);
+
+                const fb = document.createElement("p");
+                fb.id = "g1-fb-" + chat.id;
+                fb.className = "hidden text-xs font-bold";
+                card.appendChild(fb);
+
+                container.appendChild(card);
+            });
+        }
+
+        // ==========================================
+        // GAME 2: 4-WAY FUTURE RADAR
+        // ==========================================
+
+        function renderGame2() {
+            const container = document.getElementById("g2-container");
+            container.innerHTML = "";
+
+            g2Data.forEach((item) => {
+                const card = document.createElement("div");
+                card.id = "g2-card-" + item.id;
+                card.className = "p-4 sm:p-5 rounded-2xl border border-slate-200 bg-slate-50/60 transition-all space-y-3";
+
+                const text = document.createElement("p");
+                text.className = "text-sm sm:text-base font-semibold text-slate-900 leading-snug";
+                text.textContent = item.id + ". \"" + item.sentence + "\"";
+                card.appendChild(text);
+
+                const grid = document.createElement("div");
+                grid.className = "grid grid-cols-2 sm:grid-cols-4 gap-2";
+
+                g2Badges.forEach((b) => {
+                    const btn = document.createElement("button");
+                    btn.type = "button";
+                    btn.dataset.key = b.key;
+                    btn.className = "g2-badge px-3 py-2.5 rounded-xl border border-slate-200 bg-white hover:border-purple-500 hover:bg-purple-50 text-xs font-bold text-slate-700 transition active:scale-95 flex items-center justify-center gap-1.5";
+                    btn.textContent = b.icon + " " + b.label;
+
+                    btn.addEventListener("click", () => {
+                        if (isSubmittedAndLocked) return;
+                        g2State[item.id] = b.key;
+                        clearMissing(card);
+                        card.querySelectorAll(".g2-badge").forEach((el) => {
+                            if (el.dataset.key === b.key) {
+                                el.className = "g2-badge px-3 py-2.5 rounded-xl border-2 border-fuchsia-700 bg-fuchsia-700 text-white text-xs font-extrabold shadow-sm transition flex items-center justify-center gap-1.5";
+                            } else {
+                                el.className = "g2-badge px-3 py-2.5 rounded-xl border border-slate-200 bg-white hover:border-purple-500 hover:bg-purple-50 text-xs font-bold text-slate-700 transition active:scale-95 flex items-center justify-center gap-1.5";
+                            }
+                        });
+                    });
+
+                    grid.appendChild(btn);
+                });
+
+                card.appendChild(grid);
+
+                const fb = document.createElement("p");
+                fb.id = "g2-fb-" + item.id;
+                fb.className = "hidden text-xs font-bold";
+                card.appendChild(fb);
+
+                container.appendChild(card);
+            });
+        }
+
+        // ==========================================
+        // GAME 3: MISSION LOG VERB SWITCHES
+        // ==========================================
+
+        function renderGame3() {
+            const container = document.getElementById("g3-container");
+            container.innerHTML = "";
+
+            g3Data.forEach((item) => {
+                const row = document.createElement("div");
+                row.id = "g3-card-" + item.id;
+                row.className = "p-4 rounded-2xl border border-purple-200/70 bg-white transition-all space-y-2.5";
+
+                const line = document.createElement("div");
+                line.className = "text-sm sm:text-base text-slate-800 leading-relaxed flex flex-wrap items-center gap-x-1.5 gap-y-2";
+
+                const beforeSpan = document.createElement("span");
+                beforeSpan.className = "font-medium";
+                beforeSpan.textContent = item.before;
+
+                const switchGroup = document.createElement("span");
+                switchGroup.className = "inline-flex flex-wrap items-center gap-1 p-1 rounded-xl bg-purple-100/80 border border-purple-200";
+
+                item.options.forEach((opt) => {
+                    const btn = document.createElement("button");
+                    btn.type = "button";
+                    btn.dataset.val = opt;
+                    btn.className = "g3-switch px-2.5 py-1 rounded-lg bg-white hover:bg-purple-50 text-xs sm:text-sm font-bold text-purple-950 border border-transparent transition active:scale-95";
+                    btn.textContent = opt;
+
+                    btn.addEventListener("click", () => {
+                        if (isSubmittedAndLocked) return;
+                        g3State[item.id] = opt;
+                        clearMissing(row);
+                        switchGroup.querySelectorAll(".g3-switch").forEach((b) => {
+                            if (b.dataset.val === opt) {
+                                b.className = "g3-switch px-2.5 py-1 rounded-lg bg-purple-700 text-white text-xs sm:text-sm font-extrabold shadow-sm transition";
+                            } else {
+                                b.className = "g3-switch px-2.5 py-1 rounded-lg bg-white/70 hover:bg-white text-xs sm:text-sm font-semibold text-slate-500 transition active:scale-95";
+                            }
+                        });
+                    });
+
+                    switchGroup.appendChild(btn);
+                });
+
+                const afterSpan = document.createElement("span");
+                afterSpan.className = "font-medium";
+                afterSpan.textContent = item.after;
+
+                line.appendChild(beforeSpan);
+                line.appendChild(switchGroup);
+                line.appendChild(afterSpan);
+                row.appendChild(line);
+
+                const fb = document.createElement("p");
+                fb.id = "g3-fb-" + item.id;
+                fb.className = "hidden text-xs font-bold";
+                row.appendChild(fb);
+
+                container.appendChild(row);
+            });
+        }
+
+        // ==========================================
+        // GAME 4: NEGATIVE & QUESTION TRANSFORMER
+        // ==========================================
+
+        function renderGame4() {
+            const container = document.getElementById("g4-container");
+            container.innerHTML = "";
+
+            g4Data.forEach((item) => {
+                const card = document.createElement("div");
+                card.id = "g4-card-" + item.id;
+                card.className = "p-4 sm:p-5 rounded-2xl border border-slate-200 bg-slate-50/60 transition-all space-y-3";
+
+                const topRow = document.createElement("div");
+                topRow.className = "flex flex-wrap items-center justify-between gap-2";
+
+                const baseSentence = document.createElement("p");
+                baseSentence.className = "text-sm sm:text-base font-bold text-slate-900";
+                baseSentence.textContent = item.id + ". " + item.base;
+
+                const badge = document.createElement("span");
+                badge.className = item.targetType === "question"
+                    ? "px-2.5 py-1 rounded-full text-xs font-extrabold bg-sky-100 text-sky-900 border border-sky-200 shrink-0"
+                    : "px-2.5 py-1 rounded-full text-xs font-extrabold bg-fuchsia-100 text-fuchsia-900 border border-fuchsia-200 shrink-0";
+                badge.textContent = item.targetLabel;
+
+                topRow.appendChild(baseSentence);
+                topRow.appendChild(badge);
+                card.appendChild(topRow);
+
+                const optsWrap = document.createElement("div");
+                optsWrap.className = "space-y-2";
+
+                item.options.forEach((opt) => {
+                    const btn = document.createElement("button");
+                    btn.type = "button";
+                    btn.dataset.key = opt.key;
+                    btn.className = "g4-opt w-full text-left px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:border-purple-500 hover:bg-purple-50/50 text-sm font-medium text-slate-700 transition flex items-center gap-2.5 active:scale-[0.99]";
+
+                    const letter = document.createElement("span");
+                    letter.className = "opt-letter w-6 h-6 rounded-lg bg-slate-100 text-slate-600 font-bold text-xs flex items-center justify-center shrink-0";
+                    letter.textContent = opt.key;
+
+                    const label = document.createElement("span");
+                    label.textContent = opt.text;
+
+                    btn.appendChild(letter);
+                    btn.appendChild(label);
+
+                    btn.addEventListener("click", () => {
+                        if (isSubmittedAndLocked) return;
+                        g4State[item.id] = opt.key;
+                        clearMissing(card);
+                        card.querySelectorAll(".g4-opt").forEach((b) => {
+                            const l = b.querySelector(".opt-letter");
+                            if (b.dataset.key === opt.key) {
+                                b.className = "g4-opt w-full text-left px-4 py-2.5 rounded-xl border-2 border-purple-700 bg-purple-50 text-sm font-bold text-purple-950 transition flex items-center gap-2.5 shadow-sm";
+                                l.className = "opt-letter w-6 h-6 rounded-lg bg-purple-700 text-white font-bold text-xs flex items-center justify-center shrink-0";
+                            } else {
+                                b.className = "g4-opt w-full text-left px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:border-purple-500 hover:bg-purple-50/50 text-sm font-medium text-slate-700 transition flex items-center gap-2.5 active:scale-[0.99]";
+                                l.className = "opt-letter w-6 h-6 rounded-lg bg-slate-100 text-slate-600 font-bold text-xs flex items-center justify-center shrink-0";
+                            }
+                        });
+                    });
+
+                    optsWrap.appendChild(btn);
+                });
+
+                card.appendChild(optsWrap);
+
+                const fb = document.createElement("p");
+                fb.id = "g4-fb-" + item.id;
+                fb.className = "hidden text-xs font-bold";
+                card.appendChild(fb);
+
+                container.appendChild(card);
+            });
+        }
+
+        // ==========================================
+        // GAME 5: GRAMMAR INSPECTOR STAMP
+        // ==========================================
+
+        function renderGame5() {
+            const container = document.getElementById("g5-container");
+            container.innerHTML = "";
+
+            g5Data.forEach((item) => {
+                const card = document.createElement("div");
+                card.id = "g5-card-" + item.id;
+                card.className = "p-4 sm:p-5 rounded-2xl border border-slate-200 bg-slate-50/60 transition-all space-y-3";
+
+                const row = document.createElement("div");
+                row.className = "flex flex-col sm:flex-row sm:items-center justify-between gap-3";
+
+                const text = document.createElement("p");
+                text.className = "text-sm sm:text-base font-semibold text-slate-800 leading-snug";
+                text.textContent = item.id + ". \"" + item.sentence + "\"";
+
+                const btns = document.createElement("div");
+                btns.className = "flex items-center gap-2 shrink-0";
+
+                [
+                    { val: "correct", label: "✅ Correct" },
+                    { val: "mistake", label: "❌ Mistake" }
+                ].forEach((choice) => {
+                    const btn = document.createElement("button");
+                    btn.type = "button";
+                    btn.dataset.val = choice.val;
+                    btn.className = "g5-stamp flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:border-purple-500 hover:bg-purple-50 text-xs sm:text-sm font-extrabold text-slate-700 transition active:scale-95";
+                    btn.textContent = choice.label;
+
+                    btn.addEventListener("click", () => {
+                        if (isSubmittedAndLocked) return;
+                        g5State[item.id] = choice.val;
+                        clearMissing(card);
+                        card.querySelectorAll(".g5-stamp").forEach((b) => {
+                            if (b.dataset.val === choice.val) {
+                                b.className = choice.val === "correct"
+                                    ? "g5-stamp flex-1 sm:flex-none px-4 py-2.5 rounded-xl border-2 border-emerald-700 bg-emerald-700 text-white text-xs sm:text-sm font-extrabold shadow-sm transition"
+                                    : "g5-stamp flex-1 sm:flex-none px-4 py-2.5 rounded-xl border-2 border-fuchsia-700 bg-fuchsia-700 text-white text-xs sm:text-sm font-extrabold shadow-sm transition";
+                            } else {
+                                b.className = "g5-stamp flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:border-purple-500 hover:bg-purple-50 text-xs sm:text-sm font-extrabold text-slate-700 transition active:scale-95";
+                            }
+                        });
+                    });
+
+                    btns.appendChild(btn);
+                });
+
+                row.appendChild(text);
+                row.appendChild(btns);
+                card.appendChild(row);
+
+                const fb = document.createElement("p");
+                fb.id = "g5-fb-" + item.id;
+                fb.className = "hidden text-xs font-bold";
+                card.appendChild(fb);
+
+                container.appendChild(card);
+            });
+        }
+
+        // ==========================================
+        // STRICT VALIDATION (ALL 25 ITEMS + NAME)
+        // ==========================================
+
+        function validateAll() {
+            const missingElements = [];
+
+            // 1. Student Name
+            const nameInput = document.getElementById("studentName");
+            const nameError = document.getElementById("name-error");
+            clearMissing(nameInput);
+            nameError.classList.add("hidden");
+            if (!nameInput.value.trim()) {
+                markMissing(nameInput);
+                nameError.classList.remove("hidden");
+                missingElements.push(nameInput);
+            }
+
+            // 2. Game 1
+            g1Data.forEach((item) => {
+                const card = document.getElementById("g1-card-" + item.id);
+                clearMissing(card);
+                if (!g1State[item.id]) {
+                    markMissing(card);
+                    missingElements.push(card);
+                }
+            });
+
+            // 3. Game 2
+            g2Data.forEach((item) => {
+                const card = document.getElementById("g2-card-" + item.id);
+                clearMissing(card);
+                if (!g2State[item.id]) {
+                    markMissing(card);
+                    missingElements.push(card);
+                }
+            });
+
+            // 4. Game 3
+            g3Data.forEach((item) => {
+                const card = document.getElementById("g3-card-" + item.id);
+                clearMissing(card);
+                if (!g3State[item.id]) {
+                    markMissing(card);
+                    missingElements.push(card);
+                }
+            });
+
+            // 5. Game 4
+            g4Data.forEach((item) => {
+                const card = document.getElementById("g4-card-" + item.id);
+                clearMissing(card);
+                if (!g4State[item.id]) {
+                    markMissing(card);
+                    missingElements.push(card);
+                }
+            });
+
+            // 6. Game 5
+            g5Data.forEach((item) => {
+                const card = document.getElementById("g5-card-" + item.id);
+                clearMissing(card);
+                if (!g5State[item.id]) {
+                    markMissing(card);
+                    missingElements.push(card);
+                }
+            });
+
+            if (missingElements.length > 0) {
+                showIncompleteWarning(missingElements.length);
+                const firstMissing = missingElements[0];
+                firstMissing.scrollIntoView({ behavior: "smooth", block: "center" });
+                if (firstMissing.tagName === "INPUT") {
+                    setTimeout(() => firstMissing.focus({ preventScroll: true }), 350);
+                }
+                return false;
+            }
+
+            hideIncompleteWarning();
+            return true;
+        }
+
+        // ==========================================
+        // LOCK CONTROLS AFTER GRADING
+        // ==========================================
+
+        function lockAllControls() {
+            isSubmittedAndLocked = true;
+            document.getElementById("studentName").disabled = true;
+
+            document.querySelectorAll(".g1-reply, .g2-badge, .g3-switch, .g4-opt, .g5-stamp").forEach((btn) => {
+                btn.disabled = true;
+                btn.classList.add("cursor-not-allowed");
+            });
+        }
+
+        // ==========================================
+        // TELEGRAM PLAIN-TEXT SENDER (CHUNKED)
+        // ==========================================
+
+        function splitIntoChunks(text, maxLen = 3800) {
+            if (text.length <= maxLen) return [text];
+            const lines = text.split("\n");
+            const chunks = [];
+            let current = "";
+            for (const line of lines) {
+                if ((current + "\n" + line).length > maxLen) {
+                    if (current.trim()) chunks.push(current.trim());
+                    current = line;
+                } else {
+                    current = current ? current + "\n" + line : line;
+                }
+            }
+            if (current.trim()) chunks.push(current.trim());
+            return chunks;
+        }
+
+        async function sendPlainTextToTelegram(messageText) {
+            const chunks = splitIntoChunks(messageText, 3800);
+            const url = "https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage";
+
+            for (const chunk of chunks) {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: chunk
+                    })
+                });
+                const data = await response.json();
+                if (!response.ok || !data.ok) {
+                    throw new Error(data.description || "Telegram API error");
+                }
+            }
+        }
+
+        // ==========================================
+        // GRADING & FORM SUBMISSION
+        // ==========================================
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+
+            const submitBtn = document.getElementById("submit-btn");
+            const submitBtnText = document.getElementById("submit-btn-text");
+            const resultBanner = document.getElementById("result-banner");
+            const resultTitle = document.getElementById("result-title");
+            const resultMessage = document.getElementById("result-message");
+
+            if (isSubmittedAndLocked && !lastPreparedReport) {
+                return;
+            }
+
+            if (!lastPreparedReport) {
+                if (!validateAll()) {
+                    return;
+                }
+
+                const studentName = document.getElementById("studentName").value.trim();
+
+                // --- Grade Game 1: Space Messenger (5 pts) ---
+                let g1Score = 0;
+                const g1Mistakes = [];
+                g1Data.forEach((chat) => {
+                    const chosen = g1State[chat.id];
+                    const isCorrect = chosen === chat.correct;
+                    const card = document.getElementById("g1-card-" + chat.id);
+                    const fb = document.getElementById("g1-fb-" + chat.id);
+                    const correctObj = chat.replies.find((r) => r.key === chat.correct);
+                    const userObj = chat.replies.find((r) => r.key === chosen);
+
+                    setCardGradeStyle(card, isCorrect);
+                    fb.classList.remove("hidden", "text-emerald-700", "text-rose-700");
+
+                    if (isCorrect) {
+                        g1Score++;
+                        fb.classList.add("text-emerald-700");
+                        fb.textContent = "✓ Spot on! (" + chat.note + ")";
+                    } else {
+                        fb.classList.add("text-rose-700");
+                        fb.textContent = '✗ Correct reply: "' + correctObj.text + '" (' + chat.note + ")";
+                        g1Mistakes.push('  - Chat #' + chat.id + ': chose "' + userObj.text + '" (correct: "' + correctObj.text + '")');
+                    }
+                });
+                showScoreBadge("g1-score-badge", g1Score, g1Data.length);
+
+                // --- Grade Game 2: Future Radar (6 pts) ---
+                let g2Score = 0;
+                const g2Mistakes = [];
+                g2Data.forEach((item) => {
+                    const chosen = g2State[item.id];
+                    const isCorrect = chosen === item.correct;
+                    const card = document.getElementById("g2-card-" + item.id);
+                    const fb = document.getElementById("g2-fb-" + item.id);
+                    const correctBadge = g2Badges.find((b) => b.key === item.correct);
+                    const userBadge = g2Badges.find((b) => b.key === chosen);
+
+                    setCardGradeStyle(card, isCorrect);
+                    fb.classList.remove("hidden", "text-emerald-700", "text-rose-700");
+
+                    if (isCorrect) {
+                        g2Score++;
+                        fb.classList.add("text-emerald-700");
+                        fb.textContent = "✓ Correct! (" + correctBadge.icon + " " + correctBadge.label + ")";
+                    } else {
+                        fb.classList.add("text-rose-700");
+                        fb.textContent = "✗ Correct rule: " + correctBadge.icon + " " + correctBadge.label;
+                        g2Mistakes.push("  - #" + item.id + ": chose " + userBadge.label + " (correct: " + correctBadge.label + ")");
+                    }
+                });
+                showScoreBadge("g2-score-badge", g2Score, g2Data.length);
+
+                // --- Grade Game 3: Mission Log Switches (6 pts) ---
+                let g3Score = 0;
+                const g3Mistakes = [];
+                g3Data.forEach((item) => {
+                    const chosen = g3State[item.id];
+                    const isCorrect = chosen === item.correct;
+                    const card = document.getElementById("g3-card-" + item.id);
+                    const fb = document.getElementById("g3-fb-" + item.id);
+
+                    setCardGradeStyle(card, isCorrect);
+                    fb.classList.remove("hidden", "text-emerald-700", "text-rose-700");
+
+                    if (isCorrect) {
+                        g3Score++;
+                        fb.classList.add("text-emerald-700");
+                        fb.textContent = "✓ Correct: " + item.correct;
+                    } else {
+                        fb.classList.add("text-rose-700");
+                        fb.textContent = "✗ Correct verb: " + item.correct;
+                        g3Mistakes.push('  - Log #' + item.id + ': "' + chosen + '" (correct: "' + item.correct + '")');
+                    }
+                });
+                showScoreBadge("g3-score-badge", g3Score, g3Data.length);
+
+                // --- Grade Game 4: Negative & Question Flip (4 pts) ---
+                let g4Score = 0;
+                const g4Mistakes = [];
+                g4Data.forEach((item) => {
+                    const chosen = g4State[item.id];
+                    const isCorrect = chosen === item.correct;
+                    const card = document.getElementById("g4-card-" + item.id);
+                    const fb = document.getElementById("g4-fb-" + item.id);
+                    const correctObj = item.options.find((o) => o.key === item.correct);
+                    const userObj = item.options.find((o) => o.key === chosen);
+
+                    setCardGradeStyle(card, isCorrect);
+                    fb.classList.remove("hidden", "text-emerald-700", "text-rose-700");
+
+                    if (isCorrect) {
+                        g4Score++;
+                        fb.classList.add("text-emerald-700");
+                        fb.textContent = "✓ Perfect transformation!";
+                    } else {
+                        fb.classList.add("text-rose-700");
+                        fb.textContent = "✗ Correct: " + correctObj.text;
+                        g4Mistakes.push('  - #' + item.id + ': "' + userObj.text + '" (correct: "' + correctObj.text + '")');
+                    }
+                });
+                showScoreBadge("g4-score-badge", g4Score, g4Data.length);
+
+                // --- Grade Game 5: Grammar Inspector (4 pts) ---
+                let g5Score = 0;
+                const g5Mistakes = [];
+                g5Data.forEach((item) => {
+                    const chosen = g5State[item.id];
+                    const isCorrect = chosen === item.correct;
+                    const card = document.getElementById("g5-card-" + item.id);
+                    const fb = document.getElementById("g5-fb-" + item.id);
+
+                    setCardGradeStyle(card, isCorrect);
+                    fb.classList.remove("hidden", "text-emerald-700", "text-rose-700");
+
+                    if (isCorrect) {
+                        g5Score++;
+                        fb.classList.add("text-emerald-700");
+                        fb.textContent = "✓ " + item.explanation;
+                    } else {
+                        fb.classList.add("text-rose-700");
+                        fb.textContent = "✗ " + item.explanation;
+                        g5Mistakes.push("  - #" + item.id + ": stamped " + chosen + " (correct: " + item.correct + ")");
+                    }
+                });
+                showScoreBadge("g5-score-badge", g5Score, g5Data.length);
+
+                // --- Totals & Breakdown ---
+                const totalScore = g1Score + g2Score + g3Score + g4Score + g5Score;
+                const maxScore = 25;
+                const percent = Math.round((totalScore / maxScore) * 100);
+
+                document.getElementById("result-score").textContent = totalScore + " / " + maxScore;
+                document.getElementById("result-percent").textContent = percent + "%";
+
+                const breakdown = document.getElementById("result-breakdown");
+                breakdown.innerHTML = "";
+                [
+                    { label: "1. Chat", val: g1Score + " / 5" },
+                    { label: "2. Radar", val: g2Score + " / 6" },
+                    { label: "3. Log", val: g3Score + " / 6" },
+                    { label: "4. Flip", val: g4Score + " / 4" },
+                    { label: "5. Stamp", val: g5Score + " / 4" }
+                ].forEach((part) => {
+                    const box = document.createElement("div");
+                    box.className = "bg-white/90 rounded-xl p-2 text-center border border-black/5";
+                    const lbl = document.createElement("div");
+                    lbl.className = "text-slate-500";
+                    lbl.textContent = part.label;
+                    const val = document.createElement("div");
+                    val.className = "font-bold text-slate-900 mt-0.5";
+                    val.textContent = part.val;
+                    box.appendChild(lbl);
+                    box.appendChild(val);
+                    breakdown.appendChild(box);
+                });
+
+                // --- Build Plain-Text Telegram Report ---
+                const reportLines = [
+                    "🛸 Lesson 26: Space & The Future — 5 Games",
+                    "👤 Student: " + studentName,
+                    "🏆 Total Score: " + totalScore + " / " + maxScore + " (" + percent + "%)",
+                    "",
+                    "1️⃣ Space Messenger: " + g1Score + "/5",
+                    g1Mistakes.length ? g1Mistakes.join("\n") : "  ✅ No mistakes!",
+                    "",
+                    "2️⃣ Future Radar (Rules): " + g2Score + "/6",
+                    g2Mistakes.length ? g2Mistakes.join("\n") : "  ✅ No mistakes!",
+                    "",
+                    "3️⃣ Mission Log Switches: " + g3Score + "/6",
+                    g3Mistakes.length ? g3Mistakes.join("\n") : "  ✅ No mistakes!",
+                    "",
+                    "4️⃣ Negative & Question Flip: " + g4Score + "/4",
+                    g4Mistakes.length ? g4Mistakes.join("\n") : "  ✅ No mistakes!",
+                    "",
+                    "5️⃣ Grammar Inspector Stamp: " + g5Score + "/4",
+                    g5Mistakes.length ? g5Mistakes.join("\n") : "  ✅ No mistakes!"
+                ];
+                lastPreparedReport = reportLines.join("\n");
+                lockAllControls();
+            }
+
+            // --- Send Report to Telegram ---
+            submitBtn.disabled = true;
+            submitBtnText.textContent = "Надсилаємо...";
+
+            try {
+                await sendPlainTextToTelegram(lastPreparedReport);
+                lastPreparedReport = null;
+
+                resultBanner.className = "rounded-2xl p-5 sm:p-6 border bg-emerald-50 border-emerald-300 text-emerald-950 transition-all space-y-4";
+                resultTitle.textContent = "Відправлено вчителю ✅";
+                resultMessage.textContent = "Чудова місія! Прокрути сторінку вгору, щоб переглянути свої результати по кожній міні-грі.";
+                submitBtnText.textContent = "Відправлено вчителю ✅";
+            } catch (error) {
+                console.error("Telegram send error:", error);
+                resultBanner.className = "rounded-2xl p-5 sm:p-6 border bg-rose-50 border-rose-300 text-rose-950 transition-all space-y-4";
+                resultTitle.textContent = "Не вдалося надіслати вчителю ⚠️";
+                resultMessage.textContent = "Твої відповіді перевірено вище, але сталася помилка з'єднання. Перевір інтернет і натисни кнопку ще раз.";
+                submitBtn.disabled = false;
+                submitBtnText.textContent = "Спробувати надіслати ще раз";
+            } finally {
+                resultBanner.classList.remove("hidden");
+                resultBanner.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            }
+        }
+
+        // ==========================================
+        // INITIALIZATION
+        // ==========================================
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // 1. Render all 5 interactive mini-games
+            renderGame1();
+            renderGame2();
+            renderGame3();
+            renderGame4();
+            renderGame5();
+
+            // 2. Collapsible Grammar Help Panel
+            const helpToggle = document.getElementById("help-toggle");
+            const helpPanel = document.getElementById("help-panel");
+            const helpChevron = document.getElementById("help-chevron");
+
+            helpToggle.addEventListener("click", () => {
+                const isHidden = helpPanel.classList.toggle("hidden");
+                helpToggle.setAttribute("aria-expanded", String(!isHidden));
+                helpChevron.classList.toggle("rotate-180", !isHidden);
+            });
+
+            // 3. Ukrainian Hint buttons
+            document.querySelectorAll(".hint-toggle-btn").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    const targetId = btn.dataset.hintTarget;
+                    const hintBox = document.getElementById(targetId);
+                    if (hintBox) hintBox.classList.toggle("hidden");
+                });
+            });
+
+            // 4. Close incomplete warning toast
+            document.getElementById("close-toast-btn").addEventListener("click", () => {
+                document.getElementById("incomplete-toast").classList.add("hidden");
+            });
+
+            // 5. Clear student name error on input
+            const nameInput = document.getElementById("studentName");
+            nameInput.addEventListener("input", () => {
+                if (nameInput.value.trim()) {
+                    clearMissing(nameInput);
+                    document.getElementById("name-error").classList.add("hidden");
+                }
+            });
+
+            // 6. Auto-fill student name from URL (?name=...)
+            const params = new URLSearchParams(window.location.search);
+            const nameFromUrl = params.get("name");
+            if (nameFromUrl) {
+                nameInput.value = nameFromUrl;
+            }
+
+            // 7. Form submission
+            document.getElementById("homework-form").addEventListener("submit", handleSubmit);
+        });
+    </script>
+</body>
+</html>
